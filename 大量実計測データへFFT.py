@@ -152,7 +152,7 @@ class Calculation:
 def main():
     print("Start :"+str(len(basis))+"回")
     for n_basis in range(len(basis)):
-        Date=str(basis[n_basis][9])+str(basis[n_basis][10])+str('%02.0f'%(basis[n_basis][11]))+str('%02.0f'%(basis[n_basis][12]))
+        Date=str(basis[n_basis][9])+str('%02.0f'%(basis[n_basis][10]))+str('%02.0f'%(basis[n_basis][11]))+str('%02.0f'%(basis[n_basis][12]))
         VDRjudge, speed_mean , HDG_mean = VDR(Date)#VDRデータから対象csvファイル検索
         if VDRjudge == False:
             continue
