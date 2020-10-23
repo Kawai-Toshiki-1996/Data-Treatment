@@ -17,17 +17,18 @@ fs_VDR=1
 cut_filter=0.02 #カット周波数
 
 """各データセットのpath"""
-HMS_path='G:/大量データ解析/データ格納庫/BLUE-JAY/HMS_33Hz/*.csv'
-SIMS_path='G:/大量データ解析/データ格納庫/BLUE-JAY/SIMS_10Hz/*.csv'
-VDR_path='G:/大量データ解析/データ格納庫/BLUE-JAY/VDR/*.csv'
-glob.glob(HMS_path)[0][47:57]
+HMS_path= 'J:/14000TEU/2 NYK IBIS/20180621+20190719/HMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/HMS_33Hz/*.csv'
+SIMS_path='J:/14000TEU/2 NYK IBIS/20180621+20190719/SIMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/SIMS_10Hz/*.csv'
+VDR_path= 'J:/14000TEU/2 NYK IBIS/20180621+20190719/SIMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/VDR/*.csv'
+print(glob.glob(HMS_path)[0][len(HMS_path)-5+11:len(HMS_path)-5+11+10])
+print(glob.glob(SIMS_path)[0][len(SIMS_path)-5+9:len(SIMS_path)-5+9+10])
 
 """各データの日付情報リスト作成"""
-HMS_list=[str(i[47:57]) for i in glob.glob(HMS_path)]
+HMS_list=[str(i[len(HMS_path)-5:len(HMS_path)+16]) for i in glob.glob(HMS_path) if i[len(HMS_path)-5:len(HMS_path)+6] == 'RawStr_HMS_']
 print(HMS_list[0])
-SIMS_list=[str(i[46:56]) for i in glob.glob(SIMS_path)]
+SIMS_list=[str(i[len(SIMS_path)-5:len(SIMS_path)+14]) for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+4] == 'RAW_Gyro_']
 print(SIMS_list[0])
-VDR_list=[str(i[39:49]) for i in glob.glob(VDR_path)]
+VDR_list=[str(i[len(SIMS_path)-5:len(SIMS_path)+13]) for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+3] == 'RAW_VDR_']
 print(VDR_list[0])
 
 """書き込みcsvファイル作成"""
@@ -39,14 +40,14 @@ f2.write("year,month,day,time,kn,HDG,H1,theta1,lamda1,w1,H2,theta2,lambda2,w2,er
 f2.write('\n')
 
 """実行部分"""
-def Searching(date_number,listname):
-    judge=date_number in listname
-    if date_number in listname:
-        return listname.index(date_number),judge
+def Searching(csv_filename,listname):
+    judge=csv_filename in listname
+    if csv_filename in listname:
+        return listname.index(csv_filename),judge
     return 0,judge
     
 def HMS(Date):
-    row, judge=Searching(Date,HMS_list)
+    row, judge=Searching('RawStr_HMS_'+str(Date),HMS_list)
     if judge==True:
         HMSdata=pd.read_csv(glob.glob(HMS_path)[row],engine='python',usecols=[5,6],header=0).dropna()
         HMSdata=HMSdata.values
@@ -57,7 +58,7 @@ def HMS(Date):
     return judge,0
     
 def SIMS(Date):
-    row,judge=Searching(Date,SIMS_list)
+    row,judge=Searching('RAW_Gyro_'+str(Date),SIMS_list)
     if judge==True:
         SIMSdata=pd.read_csv(glob.glob(SIMS_path)[row],engine='python',usecols=[1,2,8],header=0).dropna()
         SIMSdata=SIMSdata.values
@@ -68,7 +69,7 @@ def SIMS(Date):
     return judge, 0,0,0
     
 def VDR(Date):
-    row , judge=Searching(Date,VDR_list)
+    row , judge=Searching('RAW_VDR_'+str(Date),VDR_list)
     if judge==True:
         VDRdata=pd.read_csv(glob.glob(VDR_path)[row],engine='python',usecols=[7,8],header=0).dropna()#status_water_speed,HDG
         VDRdata=VDRdata.values
