@@ -5,10 +5,7 @@ import pandas as pd
 import glob
 from scipy import interpolate
 
-basis_data= pd.read_csv('G:/大量データ解析/データ格納庫/BLUE-JAY/BLUE-JAY_再探索結果_ver3.csv', header=None,engine='python')
-basis=basis_data.values
-print(np.shape(basis))
-print(str(basis[0][9])+str(basis[0][10])+str('%02.0f'%(basis[0][11]))+str('%02.0f'%(basis[0][12])))
+ship_name='IBIS'
 
 """サンプリング周波数"""
 fs_HMS=33
@@ -17,27 +14,40 @@ fs_VDR=1
 cut_filter=0.02 #カット周波数
 
 """各データセットのpath"""
-HMS_path= 'J:/14000TEU/2 NYK IBIS/20180621+20190719/HMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/HMS_33Hz/*.csv'
-SIMS_path='J:/14000TEU/2 NYK IBIS/20180621+20190719/SIMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/SIMS_10Hz/*.csv'
-VDR_path= 'J:/14000TEU/2 NYK IBIS/20180621+20190719/SIMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/VDR/*.csv'
+HMS_path= 'J:/14000TEU/2 NYK IBIS/20200115/HMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/HMS_33Hz/*.csv'
+SIMS_path='J:/14000TEU/2 NYK IBIS/20200115/SIMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/SIMS_10Hz/*.csv'
+#VDR_path= 'J:/14000TEU/2 NYK IBIS/20180621+20190719/SIMS/*.csv'#'G:/大量データ解析/データ格納庫/BLUE-JAY/VDR/*.csv'
 print(glob.glob(HMS_path)[0][len(HMS_path)-5+11:len(HMS_path)-5+11+10])
 print(glob.glob(SIMS_path)[0][len(SIMS_path)-5+9:len(SIMS_path)-5+9+10])
 
-"""各データの日付情報リスト作成"""
-HMS_list=[str(i[len(HMS_path)-5:len(HMS_path)+16]) for i in glob.glob(HMS_path) if i[len(HMS_path)-5:len(HMS_path)+6] == 'RawStr_HMS_']
-print(HMS_list[0])
-SIMS_list=[str(i[len(SIMS_path)-5:len(SIMS_path)+14]) for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+4] == 'RAW_Gyro_']
-print(SIMS_list[0])
-VDR_list=[str(i[len(SIMS_path)-5:len(SIMS_path)+13]) for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+3] == 'RAW_VDR_']
-print(VDR_list[0])
-
 """書き込みcsvファイル作成"""
-f1=open('G:/大量データ解析/データ格納庫/BLUE-JAY/BLUE-JAY_by_FFT.csv',"w")
+f1=open('G:/大量データ解析/データ格納庫/'+ship_name+'/Again/'+ship_name+'_by_FFT.csv',"w")
 f1.write("year,month,day,time,kn,HDG,H1,theta1,lamda1,w1,H2,theta2,lambda2,w2,error,HbyJWA,TbyJWA,keido,ido,P,R,H,S,")
 f1.write('\n')
-f2=open('G:/大量データ解析/データ格納庫/BLUE-JAY/m0_BLUE-JAY_by_FFT.csv',"w")
+f2=open('G:/大量データ解析/データ格納庫/'+ship_name+'/Again/m0_'+ship_name+'_by_FFT.csv',"w")
 f2.write("year,month,day,time,kn,HDG,H1,theta1,lamda1,w1,H2,theta2,lambda2,w2,error,HbyJWA,TbyJWA,keido,ido,P,R,H,S,")
 f2.write('\n')
+
+basis_data= pd.read_csv('G:/大量データ解析/データ格納庫/'+ship_name+'/'+ship_name+'_再探索結果_ver3.csv', header=None,engine='python')
+basis=basis_data.values
+print(np.shape(basis))
+print(str(basis[400][9])+str('%02.0f'%(basis[400][10]))+str('%02.0f'%(basis[400][11]))+str('%02.0f'%(basis[400][12])))
+
+
+"""各データの日付情報リスト作成"""
+HMS_list=[str(i[len(HMS_path)-5:len(HMS_path)+16]) for i in glob.glob(HMS_path) if i[len(HMS_path)-5:len(HMS_path)+6] == 'RawStr_HMS_']
+HMS_path_list=[i for i in glob.glob(HMS_path) if i[len(HMS_path)-5:len(HMS_path)+6] == 'RawStr_HMS_']
+print(HMS_list[0])
+print(HMS_path_list[0])
+SIMS_list=[str(i[len(SIMS_path)-5:len(SIMS_path)+14]) for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+4] == 'RAW_Gyro_']
+SIMS_path_list=[i for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+4] == 'RAW_Gyro_']
+print(SIMS_list[0])
+print(SIMS_path_list[0])
+VDR_list=[str(i[len(SIMS_path)-5:len(SIMS_path)+13]) for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+3] == 'RAW_VDR_']
+VDR_path_list=[i for i in glob.glob(SIMS_path) if i[len(SIMS_path)-5:len(SIMS_path)+3] == 'RAW_VDR_']
+print(VDR_list[0])
+print(VDR_path_list[0])
+
 
 """実行部分"""
 def Searching(csv_filename,listname):
@@ -49,7 +59,7 @@ def Searching(csv_filename,listname):
 def HMS(Date):
     row, judge=Searching('RawStr_HMS_'+str(Date),HMS_list)
     if judge==True:
-        HMSdata=pd.read_csv(glob.glob(HMS_path)[row],engine='python',usecols=[5,6],header=0).dropna()
+        HMSdata=pd.read_csv(HMS_path_list[row],engine='python',usecols=[5,6],header=0).dropna()
         HMSdata=HMSdata.values
         judge=False
         if len(HMSdata) >= fs_HMS*60*50:#当該csvでデータ量を確認
@@ -60,7 +70,7 @@ def HMS(Date):
 def SIMS(Date):
     row,judge=Searching('RAW_Gyro_'+str(Date),SIMS_list)
     if judge==True:
-        SIMSdata=pd.read_csv(glob.glob(SIMS_path)[row],engine='python',usecols=[1,2,8],header=0).dropna()
+        SIMSdata=pd.read_csv(SIMS_path_list[row],engine='c',usecols=[1,2,8],header=0).dropna()
         SIMSdata=SIMSdata.values
         judge=False
         if len(SIMSdata) >= fs_SIMS*60*50:#当該csvでデータ量を確認
@@ -71,10 +81,10 @@ def SIMS(Date):
 def VDR(Date):
     row , judge=Searching('RAW_VDR_'+str(Date),VDR_list)
     if judge==True:
-        VDRdata=pd.read_csv(glob.glob(VDR_path)[row],engine='python',usecols=[7,8],header=0).dropna()#status_water_speed,HDG
+        VDRdata=pd.read_csv(VDR_path_list[row],engine='python',usecols=[7,8],header=0).dropna()#status_water_speed,HDG
         VDRdata=VDRdata.values
         judge=False
-        if len(VDRdata) >= fs_VDR*60*50:#当該csvでデータ量を確認
+        if len(VDRdata) >= fs_VDR*60*10:#当該csvでデータ量を確認
             if (np.max(VDRdata[:,0])-np.min(VDRdata[:,0])) <=2:#1時間で2kn以上の変化がないことを確認
                 #角度変化の時系列作成
                 direction_t=np.zeros(len(VDRdata))
@@ -83,7 +93,7 @@ def VDR(Date):
                 #1時間で船首方位が15°以内であることを確認
                 if (np.max(direction_t)-np.min(direction_t)) <= 15 :
                     judge=True
-                    return judge , np.mean(VDRdata[:,0]), VDRdata[0,1]+np.mean(VDRdata[:,1])
+                    return judge , np.mean(VDRdata[:,0]), VDRdata[0,1]+np.mean(direction_t)
     return judge,0,0
 
 def FFT(time_series,fs):
@@ -129,8 +139,9 @@ class Calculation:
     def Writing_m0(self,x,f):
         X=interpolate.interp1d(self.freq,x,kind='nearest')
         m0=0
+        X1=X(self.encounter_omega)
         for i in range(len(self.encounter_omega)-1):
-            m0+=(X(self.encounter_omega)[i]+X(self.encounter_omega)[i+1])*0.03*2
+            m0+=(X1[i]+X1[i+1])*0.03*2
         f.write(str(m0)+",")
     
     def Heave_calculation(self,x):#Heave成分の時系列データ作成
