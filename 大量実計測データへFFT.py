@@ -65,7 +65,7 @@ def HMS(Date):
         if len(HMSdata) >= fs_HMS*60*50:#当該csvでデータ量を確認
             judge=True
             X=interpolate.interp1d(np.arange(0,len(np.array(HMSdata[:,0])/2+np.array(HMSdata[:,1])/2)/fs_HMS,1/fs_HMS),np.array(HMSdata[:,0])/2+np.array(HMSdata[:,1])/2,kind='nearest')
-            return judge , X(np.arange(0,3600,1/fs_SIMS))
+            return judge , X(np.arange(0,len(np.array(HMSdata[:,0]))/fs_HMS-10,1/fs_SIMS))
     return judge,0
     
 def SIMS(Date):
