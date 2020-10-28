@@ -64,7 +64,8 @@ def HMS(Date):
         judge=False
         if len(HMSdata) >= fs_HMS*60*50:#当該csvでデータ量を確認
             judge=True
-            return judge , np.array(HMSdata[:,0])/2+np.array(HMSdata[:,1])/2
+            X=interpolate.interp1d(np.arange(0,len(np.array(HMSdata[:,0])/2+np.array(HMSdata[:,1])/2)/fs_HMS,1/fs_HMS),np.array(HMSdata[:,0])/2+np.array(HMSdata[:,1])/2,kind='nearest')
+            return judge , X(np.arange(0,3600,1/fs_SIMS))
     return judge,0
     
 def SIMS(Date):
@@ -152,9 +153,7 @@ class Calculation:
         Z_dis=np.real(np.fft.ifft(FFT(Z_dis,fs_SIMS)))*len(Z_dis)#周波数カット
         heave_actual=Z_dis-49.55878*np.sin(self.pitch_t*np.pi/180)#ピッチ成分カット
         heave_actual=np.real(np.fft.ifft(FFT(heave_actual,fs_SIMS)))*len(heave_actual)#周波数カット
-        """内挿"""
-        X=interpolate.interp1d(np.arange(0,len(heave_actual)/fs_HMS,1/fs_HMS),heave_actual,kind='nearest')
-        return X(np.arange(0,len(heave_actual)/fs_HMS-10,1/fs_SIMS))
+        return heave_actual
     
     def Welch_ModifiedPeriodogram(self,X,Y):
         freq,csd=signal.csd(X,Y,fs_SIMS,window='hann',nperseg=self.frame_size,noverlap=self.frame_size-self.slide_size,scaling='density')
