@@ -132,9 +132,10 @@ class Calculation:
         self.freq=0
         
     def Writing(self,x,f):
-        X=interpolate.interp1d(self.freq,x,kind='nearest')
+        S=interpolate.interp1d(self.freq,x,kind='nearest')
+        X=S(self.encounter_omega)
         for i in range(len(self.encounter_omega)):
-            f.write(str(X(self.encounter_omega)[i])+",")
+            f.write(str(X[i])+",")
 
     def Writing_m0(self,x,f):
         X=interpolate.interp1d(self.freq,x,kind='nearest')
@@ -158,7 +159,7 @@ class Calculation:
     
     def Welch_ModifiedPeriodogram(self,X,Y):
         freq,csd=signal.csd(X,Y,fs_SIMS,window='hann',nperseg=self.frame_size,noverlap=self.frame_size-self.slide_size,scaling='density')
-        self.freq=freq
+        self.freq=freq*2*np.pi
         return csd/(2*np.pi)
 
 def main():
@@ -183,35 +184,35 @@ def main():
         Writing_basis(n_basis,Date,speed_mean,HDG_mean,f1)
         Writing_basis(n_basis,Date,speed_mean,HDG_mean,f2)
         """Power Spectrum Density"""
-        XY = DataSet.Welch_ModifiedPeriodogram(pitch_t,pitch_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.pitch_t,DataSet.pitch_t)
         DataSet.Writing(np.abs(XY),f1)
         DataSet.Writing_m0(np.abs(XY),f2)
-        XY = DataSet.Welch_ModifiedPeriodogram(roll_t,roll_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.roll_t,DataSet.roll_t)
         DataSet.Writing(np.abs(XY),f1)
         DataSet.Writing_m0(np.abs(XY),f2)
-        XY = DataSet.Welch_ModifiedPeriodogram(heave_t,heave_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.heave_t,DataSet.heave_t)
         DataSet.Writing(np.abs(XY),f1)
         DataSet.Writing_m0(np.abs(XY),f2)
-        XY = DataSet.Welch_ModifiedPeriodogram(GMPGMS_t,GMPGMS_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.GMPGMS_t,GDataSet.MPGMS_t)
         DataSet.Writing(np.abs(XY),f1)
         DataSet.Writing_m0(np.abs(XY),f2)
         """Cross Power SPectrum Density"""
-        XY = DataSet.Welch_ModifiedPeriodogram(pitch_t,roll_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.pitch_t,DataSet.roll_t)
         DataSet.Writing(XY.real,f1)
         DataSet.Writing(XY.imag,f1)
-        XY = DataSet.Welch_ModifiedPeriodogram(roll_t,heave_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.roll_t,DataSet.heave_t)
         DataSet.Writing(XY.real,f1)
         DataSet.Writing(XY.imag,f1)
-        XY = DataSet.Welch_ModifiedPeriodogram(heave_t,pitch_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.heave_t,DataSet.pitch_t)
         DataSet.Writing(XY.real,f1)
         DataSet.Writing(XY.imag,f1)
-        XY = DataSet.Welch_ModifiedPeriodogram(GMPGMS_t,roll_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.GMPGMS_t,DataSet.roll_t)
         DataSet.Writing(XY.real,f1)
         DataSet.Writing(XY.imag,f1)
-        XY = DataSet.Welch_ModifiedPeriodogram(GMPGMS_t,heave_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.GMPGMS_t,DataSet.heave_t)
         DataSet.Writing(XY.real,f1)
         DataSet.Writing(XY.imag,f1)        
-        XY = DataSet.Welch_ModifiedPeriodogram(GMPGMS_t,pitch_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.GMPGMS_t,DataSet.pitch_t)
         DataSet.Writing(XY.real,f1)
         DataSet.Writing(XY.imag,f1)
         
