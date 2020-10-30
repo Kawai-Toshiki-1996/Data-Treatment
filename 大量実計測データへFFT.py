@@ -193,7 +193,7 @@ def main():
         XY = DataSet.Welch_ModifiedPeriodogram(DataSet.heave_t,DataSet.heave_t)
         DataSet.Writing(np.abs(XY),f1)
         DataSet.Writing_m0(np.abs(XY),f2)
-        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.GMPGMS_t,GDataSet.MPGMS_t)
+        XY = DataSet.Welch_ModifiedPeriodogram(DataSet.GMPGMS_t,DataSet.GMPGMS_t)
         DataSet.Writing(np.abs(XY),f1)
         DataSet.Writing_m0(np.abs(XY),f2)
         """Cross Power SPectrum Density"""
